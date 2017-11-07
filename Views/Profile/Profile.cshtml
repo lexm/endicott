@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = @Model.user.UserName;
+}
+@using endicott.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model endicott.Models.ProfileViewModel
+
+<h3>Hi @Model.user.UserName!</h3>
+
+<h4>Here is your profile description:</h4>
+
+<p>@Model.user.Description</p>
+
+<h4>Your Professional Network:</h4>
+<table>
+    @foreach(var friend in @Model.friends)
+    {
+        <tr>
+            <td>
+                <a href="/users/@friend.userid">@friend.UserName</a>
+            </td>
+        </tr>
+    }
+</table>
+
+<h4>Invitations</h4>
+<h5>The following people asked you to be in their network:</h5>
+<table>
+    <th>
+        <td>Name</td>
+        <td>Action</td>
+    </th>
+    @foreach(var invite in @Model.invites)
+    {
+        <tr>
+            <td>@invite.Connector.UserName</td>
+            <td><a href="/accept/@invite.connectid">Accept Invite</a></td>
+            <td><a href="/ignore/@invite.connectid">Ignore</a></td>
+        </tr>
+    }
+</table>

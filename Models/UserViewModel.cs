@@ -25,6 +25,8 @@ namespace endicott.Models
         [DataType(DataType.Password)]
         // [Compare("password", ErrorMessage = "Password and confirmation must match")]
         public string Confirm { get; set; }
+        [Display(Name = "Description")]
+        public string Description { get; set; }
     }
 
     public class LoginViewModel : BaseEntity
