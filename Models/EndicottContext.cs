@@ -6,5 +6,6 @@ namespace endicott.Models
     {
         public EndicottContext(DbContextOptions<EndicottContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
+        public DbSet<Connect> Connections { get; set; }
     }
 }

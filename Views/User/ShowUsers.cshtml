@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "Users";
+}
+@using endicott.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<endicott.Models.User>
+
+<h4>Users you may want to connect with:</h4>
+
+<table>
+    <th>
+        <td>Name</td>
+        <td>Action</td>
+    </th>
+    @foreach(var user in @Model)
+    {
+        <tr>
+            <td></td>
+            <td>@user.UserName</td>
+            <td><a href=""></a>Connect</td>
+        </tr>
+    }
+</table>

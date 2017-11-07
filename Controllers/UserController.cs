@@ -19,7 +19,7 @@ namespace endicott.Controllers
         }
 
         [HttpGet]
-        [Route("")]
+        [Route("main")]
         public IActionResult LogReg()
         {
             return View();
@@ -45,6 +45,7 @@ namespace endicott.Controllers
                         UserName = user.UserName,
                         Email = user.Email,
                         Password = user.Password,
+                        Description = user.Description,
                         created_at = DateTime.Now,
                         updated_at = DateTime.Now
                     };
@@ -55,7 +56,7 @@ namespace endicott.Controllers
                     HttpContext.Session.SetString("email", NewUser.Email);
                     System.Console.WriteLine("Iz guud!");
                     // return RedirectToAction("Plan", "Wedding");
-                    return RedirectToAction("Success");
+                    return RedirectToAction("ShowUsers");
                 }
                 else
                 {
@@ -87,7 +88,7 @@ namespace endicott.Controllers
                     HttpContext.Session.SetInt32("userid", LookupUser.userid);
                     HttpContext.Session.SetString("email", LookupUser.Email);
                     // return RedirectToAction("Plan", "Wedding");
-                    return RedirectToAction("Success");
+                    return RedirectToAction("ShowUsers");
                 }
             }
             ModelState.AddModelError("Password", "User/password mismatch");
@@ -95,11 +96,39 @@ namespace endicott.Controllers
             return View("~/Views/User/LogReg.cshtml", user);
         }
 
+        [HttpGet]
+        [Route("users")]
+        public IActionResult ShowUsers()
+        {
+            if (HttpContext.Session.GetInt32("userid") != null)
+            {
+                bool IsConnected(User user)
+                {
+                    int? uid = HttpContext.Session.GetInt32("userid");
+                    List<Connect> connects = _context.Connections.Where(conn => (conn.ConnectorId == uid) || (conn.ConnecteeId == uid)).ToList();
+                    bool result = true;
+                    foreach(Connect conn in connects)
+                    {
+                        if(user.userid == conn.ConnectorId && user.userid == conn.ConnecteeId)
+                        {
+                            result = false;
+                        }
+                    }
+                    return result;
+                }
+                List<User> suggests = _context.Users.ToList();
+                suggests = suggests.Where(IsConnected).ToList();
+                return View(suggests);
+            }
+            else
+            {
+                return RedirectToAction("LogReg");
+            }
+        }
 
         public IActionResult Success()
         {
             return View("~/Views/User/Success.cshtml");
-            // return RedirectToAction("Plan", "Wedding");
         }
     }
 }
