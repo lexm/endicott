@@ -1,0 +1,9 @@
+@model endicott.Models.User
+@{
+    ViewData["Title"] = @Model.UserName;
+}
+@using endicott.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h3>@Model.UserName</h3>
+<h4>Description: @Model.Description</h4>

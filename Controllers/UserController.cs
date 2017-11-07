@@ -105,7 +105,9 @@ namespace endicott.Controllers
                 bool IsConnected(User user)
                 {
                     int? uid = HttpContext.Session.GetInt32("userid");
-                    List<Connect> connects = _context.Connections.Where(conn => (conn.ConnectorId == uid) || (conn.ConnecteeId == uid)).ToList();
+                    List<Connect> connects = _context.Connections
+                            .Where(conn => (conn.ConnectorId == uid) || (conn.ConnecteeId == uid))
+                            .ToList();
                     bool result = true;
                     foreach(Connect conn in connects)
                     {
@@ -125,6 +127,31 @@ namespace endicott.Controllers
                 return RedirectToAction("LogReg");
             }
         }
+
+        [HttpGet]
+        [Route("users/{id}")]
+        public IActionResult ShowUser(int id)
+        {
+            User CurrUser = _context.Users.SingleOrDefault(User => User.userid == id);
+            return View(CurrUser);
+        }
+
+        [HttpGet]
+        [Route("connect/{connid}")]
+        public IActionResult Connect(int connid)
+        {
+            User invitee = _context.Users.SingleOrDefault(User => User.userid == connid);
+            Connect NewInvite = new Connect
+            {
+                ConnectorId = (int)HttpContext.Session.GetInt32("userid"),
+                ConnecteeId = connid,
+                Accepted = false
+            };
+            _context.Add(NewInvite);
+            _context.SaveChanges();
+            return RedirectToAction("ShowUsers");
+        }
+
 
         public IActionResult Success()
         {
