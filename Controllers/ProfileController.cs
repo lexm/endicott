@@ -25,14 +25,14 @@ namespace endicott.Controllers
             if (HttpContext.Session.GetInt32("userid") != null)
             {
                 int id = (int)HttpContext.Session.GetInt32("userid");
-                User profiled = _context.Users.SingleOrDefault(login => login.userid == id);
-                List<User> friends = _context.Users
+                User profiled = _context.users.SingleOrDefault(login => login.userid == id);
+                List<User> friends = _context.users
                                         .Include(u => u.Connectors)
                                         .Include(u => u.Connectees)
                                         .Where(u => (u.Connectors.Select(c => c.ConnectorId).Contains(id) || u.Connectees.Select(c => c.ConnectorId).Contains(id)))
                                         .Where(u => u.userid != id)
                                     .ToList();
-                List<Connect> invites = _context.Connections.Where(c => c.ConnecteeId == id && c.Accepted == false).Include(c => c.Connector).ToList();
+                List<Connect> invites = _context.connections.Where(c => c.ConnecteeId == id && c.Accepted == false).Include(c => c.Connector).ToList();
                 var profile = new ProfileViewModel{
                     user = profiled,
                     friends = friends,
@@ -50,7 +50,7 @@ namespace endicott.Controllers
         [Route("accept/{connid}")]
         public IActionResult Accept(int connid)
         {
-            Connect invite = _context.Connections.SingleOrDefault(conn => conn.connectid == connid);
+            Connect invite = _context.connections.SingleOrDefault(conn => conn.connectid == connid);
             invite.Accepted = true;
             _context.SaveChanges();
             return RedirectToAction("Profile");
@@ -60,8 +60,8 @@ namespace endicott.Controllers
         [Route("ignore/{connid}")]
         public IActionResult Ignore(int connid)
         {
-            Connect invite = _context.Connections.SingleOrDefault(conn => conn.connectid == connid);
-            _context.Connections.Remove(invite);
+            Connect invite = _context.connections.SingleOrDefault(conn => conn.connectid == connid);
+            _context.connections.Remove(invite);
             _context.SaveChanges();
             return RedirectToAction("Profile");
         }
