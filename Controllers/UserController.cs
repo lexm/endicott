@@ -34,7 +34,7 @@ namespace endicott.Controllers
             {
                 System.Console.WriteLine("valid");
                 string UserEmail = user.Email;
-                User LookupUser = _context.Users.SingleOrDefault(login => login.Email == UserEmail);
+                User LookupUser = _context.users.SingleOrDefault(login => login.Email == UserEmail);
                 if (LookupUser == null)
                 {
                     PasswordHasher<UserViewModel> Hasher = new PasswordHasher<UserViewModel>();
@@ -51,7 +51,7 @@ namespace endicott.Controllers
                     };
                     _context.Add(NewUser);
                     _context.SaveChanges();
-                    NewUser = _context.Users.SingleOrDefault(login => login.Email == UserEmail);
+                    NewUser = _context.users.SingleOrDefault(login => login.Email == UserEmail);
                     HttpContext.Session.SetInt32("userid", NewUser.userid);
                     HttpContext.Session.SetString("email", NewUser.Email);
                     System.Console.WriteLine("Iz guud!");
@@ -77,7 +77,7 @@ namespace endicott.Controllers
         public IActionResult Login(UserViewModel user)
         {
             string UserEmail = user.Email;
-            User LookupUser = _context.Users.SingleOrDefault(login => login.Email == UserEmail);
+            User LookupUser = _context.users.SingleOrDefault(login => login.Email == UserEmail);
             if (LookupUser != null)
             {
                 PasswordHasher<UserViewModel> Hasher = new PasswordHasher<UserViewModel>();
@@ -105,7 +105,7 @@ namespace endicott.Controllers
                 bool IsConnected(User user)
                 {
                     int? uid = HttpContext.Session.GetInt32("userid");
-                    List<Connect> connects = _context.Connections
+                    List<Connect> connects = _context.connections
                             .Where(conn => (conn.ConnectorId == uid) || (conn.ConnecteeId == uid))
                             .ToList();
                     bool result = true;
@@ -118,7 +118,7 @@ namespace endicott.Controllers
                     }
                     return result;
                 }
-                List<User> suggests = _context.Users.ToList();
+                List<User> suggests = _context.users.ToList();
                 suggests = suggests.Where(IsConnected).ToList();
                 return View(suggests);
             }
@@ -132,7 +132,7 @@ namespace endicott.Controllers
         [Route("users/{id}")]
         public IActionResult ShowUser(int id)
         {
-            User CurrUser = _context.Users.SingleOrDefault(User => User.userid == id);
+            User CurrUser = _context.users.SingleOrDefault(User => User.userid == id);
             return View(CurrUser);
         }
 
@@ -140,7 +140,7 @@ namespace endicott.Controllers
         [Route("connect/{connid}")]
         public IActionResult Connect(int connid)
         {
-            User invitee = _context.Users.SingleOrDefault(User => User.userid == connid);
+            User invitee = _context.users.SingleOrDefault(User => User.userid == connid);
             Connect NewInvite = new Connect
             {
                 ConnectorId = (int)HttpContext.Session.GetInt32("userid"),
